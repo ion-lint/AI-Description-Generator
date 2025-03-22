@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investor Description Generator</title>
+  <!-- Bootstrap 5 + Google Fonts (Poppins & Inter) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #10a37f;
+      --background: #121212;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --text-light: #e0e0e0;
+      --accent: #f7f7f7;
+      --border-color: rgba(255, 255, 255, 0.2);
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 40px 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 1s ease-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: var(--primary);
+      font-size: 2.5rem;
+    }
+    .form-control, .btn {
+      border-radius: 50px;
+    }
+    .form-control {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-color);
+      color: var(--text-light);
+      transition: border 0.3s;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(16, 163, 127, 0.3);
+    }
+    .btn-custom {
+      background: var(--primary);
+      border: none;
+      padding: 14px 50px;
+      font-size: 1.125rem;
+      color: var(--accent);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-custom:hover {
+      background: #0e8c68;
+      transform: scale(1.05);
+    }
+    .result-section {
+      margin-top: 50px;
+    }
+    .result-title {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 700;
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    .card {
+      background: var(--card-bg);
+      border: none;
+      margin-bottom: 30px;
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    .card h5 {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .card p, .card h6 {
+      color: var(--text-light);
+    }
+    mark {
+      background: var(--primary);
+      color: var(--accent);
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+    .chart-img {
+      max-width: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Description Generator for Ivan Linti Portfolio Shop Edition</h1>
+    <form id="descriptionForm">
+      <div class="mb-4">
+        <label for="product_name" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="product_name" name="product_name" placeholder="For example, Sony headphones" required>
+      </div>
+      <div class="mb-4">
+        <label for="ordinary_text" class="form-label">Basic Product Description</label>
+        <textarea class="form-control" id="ordinary_text" name="ordinary_text" rows="4" placeholder="Enter the current product description" required></textarea>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-custom">Generate Description</button>
+      </div>
+    </form>
+
+    <div id="resultContainer" class="result-section" style="display: none;">
+      <hr class="my-4">
+      <h2 class="result-title">Results for "<span id="resProductName"></span>"</h2>
+
+      <div class="card">
+        <h5>Basic Description</h5>
+        <p id="resOrdinaryText"></p>
+      </div>
+
+      <div class="card">
+        <h5>Rational Description</h5>
+        <p id="resRationalText"></p>
+        <h6 class="mt-3">Comparison with Basic Description</h6>
+        <p id="resRationalDiff"></p>
+        <p class="text-muted">Sellability: <span id="resRationalScore"></span>% (Basic: <span id="resOrdinaryScore"></span>%)</p>
+      </div>
+
+      <div class="card">
+        <h5>Emotional Description</h5>
+        <p id="resEmotionalText"></p>
+        <h6 class="mt-3">Comparison with Basic Description</h6>
+        <p id="resEmotionalDiff"></p>
+        <p class="text-muted">Sellability: <span id="resEmotionalScore"></span>% (Basic: <span id="resOrdinaryScore2"></span>%)</p>
+      </div>
+
+      <div class="text-center">
+        <h5>Comparison of Metrics</h5>
+        <img id="resChart" class="chart-img" src="" alt="Improvement Chart">
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap 5 and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#descriptionForm").on("submit", function (e) {
+        e.preventDefault();
+        const product_name = $("#product_name").val();
+        const ordinary_text = $("#ordinary_text").val();
+
+        $.ajax({
+          url: "/generate",
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ product_name, ordinary_text }),
+          success: function (data) {
+            $("#resProductName").text(data.product_name);
+            $("#resOrdinaryText").text(data.ordinary_text);
+            $("#resRationalText").text(data.rational_text);
+            $("#resEmotionalText").text(data.emotional_text);
+            $("#resRationalDiff").html(data.rational_diff);
+            $("#resEmotionalDiff").html(data.emotional_diff);
+            $("#resOrdinaryScore, #resOrdinaryScore2").text(data.ordinary_score);
+            $("#resRationalScore").text(data.rational_score);
+            $("#resEmotionalScore").text(data.emotional_score);
+            $("#resChart").attr("src", "data:image/png;base64," + data.chart);
+            $("#resultContainer").slideDown();
+          },
+          error: function (err) {
+            alert("Generation error. Please try again.");
+          },
+        });
+      });
+    });
+  </script>
+</body>
+</html>
